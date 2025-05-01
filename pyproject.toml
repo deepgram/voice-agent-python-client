@@ -1,7 +1,7 @@
 [project]
 name = "pythonvoiceagent"
 version = "0.1.0"
-description = "Add your description here"
+description = "Example Python Voice Agent by Deepgram"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

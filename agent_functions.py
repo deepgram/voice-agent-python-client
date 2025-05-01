@@ -8,5 +8,4 @@ def end_story():
 FUNCTION_MAP = {
     "pick_author": pick_author,
     "end_story": end_story
-
 }

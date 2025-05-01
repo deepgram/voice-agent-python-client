@@ -124,7 +124,9 @@ async def start_stream(mic_stream, uri):
                                         f"Conversation text received.  Role: {msg.get('role')}. Content: {msg.get('content')}"
                                     )
                                 elif msg_type == "UserStartedSpeaking":
-                                    logger.info(f"User started speaking.  Stopping speaker")
+                                    logger.info(
+                                        f"User started speaking.  Stopping speaker"
+                                    )
                                     speaker.stop()
                                 elif msg_type == "Agent Thinking":
                                     logger.info(
@@ -141,16 +143,22 @@ async def start_stream(mic_stream, uri):
                                             break
                                         elif func is not None:
                                             try:
-                                                kwargs = json.loads(function_obj.get("arguments", '{}'))
+                                                kwargs = json.loads(
+                                                    function_obj.get("arguments", "{}")
+                                                )
                                                 logger.debug(f"Function args: {kwargs}")
                                                 funcresponse = func(**kwargs)
                                             except Exception as e:
                                                 logger.error(
                                                     f"Error calling function {function_obj}!"
                                                 )
-                                                funcresponse = "Function could not be called"
+                                                funcresponse = (
+                                                    "Function could not be called"
+                                                )
                                         else:
-                                            funcresponse = "Function could not be called"
+                                            funcresponse = (
+                                                "Function could not be called"
+                                            )
 
                                         response = {
                                             "type": "FunctionCallResponse",
@@ -199,36 +207,6 @@ def run_voiceagent(mic_stream, uri):
     asyncio.run(start_stream(mic_stream, uri))
 
 
-def convert_raw_to_wav(
-    input_file, output_file, rate=RATE, channels=CHANNELS, format=FORMAT
-):
-    logger.info(
-        f"Converting {input_file} to {output_file} with arguments: rate={rate}, channels={channels}, format={format}"
-    )
-    if format != pyaudio.paInt16:
-        raise ValueError("Only support 16 bit audio")
-    else:
-        format = "s16le"
-    command = [
-        "ffmpeg",
-        "-ar",
-        str(rate),
-        "-f",
-        str(format),
-        "-ac",
-        str(channels),
-        "-i",
-        input_file,
-        "-y",
-        output_file,
-    ]
-    try:
-        subprocess.run(command, check=True)
-        logger.debug(f"Conversion successful: {input_file} to {output_file}")
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Error during conversion: {e}")
-
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("microphone")
@@ -258,7 +236,3 @@ if __name__ == "__main__":
         logger.error(f"Found exception {e}")
     finally:
         stream.close()
-
-    logger.debug(
-        "Convert microphone.raw with\nffmpeg -ar 44100 -f s16le -ac 2 -i test.raw -y test.wav"
-    )
