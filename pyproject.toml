@@ -1,0 +1,11 @@
+[project]
+name = "pythonvoiceagent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "janus>=2.0.0",
+    "pyaudio>=0.2.14",
+    "websockets>=15.0.1",
+]
