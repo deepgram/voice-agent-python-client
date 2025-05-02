@@ -1,16 +1,14 @@
-import time
-from threading import Lock
 from websockets.exceptions import ConnectionClosedOK
 import asyncio
 import json
 import websockets
 import pyaudio
 import os
-import sys
 import argparse
-import subprocess
 import logging
 from agent_config import AGENT_SETTINGS
+# for multilingual demo:
+# from agent_config import MULTILINGUAL_AGENT_SETTINGS as AGENT_SETTINGS
 from agent_functions import FUNCTION_MAP
 from speaker import Speaker
 
