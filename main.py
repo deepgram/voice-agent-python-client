@@ -32,6 +32,7 @@ def configure_logger(loglevel):
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
+FRAMES_PER_BUFFER = 1024
 
 
 def _handle_task_result(task):
@@ -55,11 +56,9 @@ async def start_stream(mic_stream, uri):
     extra_headers = {"Authorization": f"Token {os.environ.get('DEEPGRAM_API_KEY')}"}
     logger.debug(uri)
     try:
-        async with websockets.connect(uri, additional_headers=extra_headers) as ws:
+        async with websockets.connect(uri, extra_headers=extra_headers) as ws:
             # see https://websockets.readthedocs.io/en/stable/reference/client.html#websockets.client.WebSocketClientProtocol
             shared_data = {"endstream": False, "agent_ready": False}
-            requestid = ws.response.headers.get("dg-request-id", ws.response.headers)
-            logger.info(f"Request: {requestid}")
 
             async def sender(mic_stream, ws, shared):
                 """Send audio through websocket."""
@@ -67,10 +66,11 @@ async def start_stream(mic_stream, uri):
                 # Start out by sending the settings
                 await ws.send(json.dumps(AGENT_SETTINGS))
                 while True:
+                    piece = mic_stream.read(FRAMES_PER_BUFFER, exception_on_overflow=False)
+
                     if not shared_data.get("agent_ready", False):
                         await asyncio.sleep(0.1)  # wait a little
-                        continue
-                    piece = mic_stream.read(mic_stream.get_read_available())
+                        continue  # Discard audio until agent is ready
 
                     if shared_data["endstream"]:
                         piece = b""  # This will close the connection
