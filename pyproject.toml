@@ -9,3 +9,6 @@ dependencies = [
     "pyaudio>=0.2.14",
     "websockets>=15.0.1",
 ]
+
+[tool.setuptools]
+py-modules = ["agent_config", "speaker", "main", "agent_functions"]
