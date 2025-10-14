@@ -56,7 +56,7 @@ async def start_stream(mic_stream, uri):
     extra_headers = {"Authorization": f"Token {os.environ.get('DEEPGRAM_API_KEY')}"}
     logger.debug(uri)
     try:
-        async with websockets.connect(uri, extra_headers=extra_headers) as ws:
+        async with websockets.connect(uri, additional_headers=extra_headers) as ws:
             # see https://websockets.readthedocs.io/en/stable/reference/client.html#websockets.client.WebSocketClientProtocol
             shared_data = {"endstream": False, "agent_ready": False}
 
